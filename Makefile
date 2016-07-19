@@ -245,8 +245,19 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer
-HOSTCXXFLAGS = -O2
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O3 -fomit-frame-pointer
+HOSTCXXFLAGS = -O3
+
+# Tweaks
+TWEAK_CFLAGS += -fgcse-las \
+                -fgcse-sm \
+		-fgraphite \
+		-fgraphite-identity \
+                -ftree-loop-ivcanon \
+                -fweb
+                
+HOSTCFLAGS += $(TWEAK_CFLAGS)
+HOSTCXXFLAGS += $(TWEAK_CFLAGS)
 
 # Decide whether to build built-in, modular, or both.
 # Normally, just do built-in.
@@ -355,8 +366,7 @@ AFLAGS_MODULE   = $(MODFLAGS)
 LDFLAGS_MODULE  = -T $(srctree)/scripts/module-common.lds
 CFLAGS_KERNEL	= $(KERNELFLAGS)
 AFLAGS_KERNEL	= $(KERNELFLAGS)
-CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
-
+CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage $(TWEAK_CFLAGS)
 
 # Use LINUXINCLUDE when you must reference the include/ directory.
 # Needed to be compatible with the O= option
